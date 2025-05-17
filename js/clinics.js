@@ -1,19 +1,29 @@
 import { apiRequest } from './api.js';
 
+let editingId = null;
+
 async function loadClinics() {
     const result = await apiRequest('/clinics');
     if (result.success) {
-        const clinicList = document.getElementById('clinicList');
-        clinicList.innerHTML = '';
+        const tableBody = document.getElementById('clinicTableBody');
+        tableBody.innerHTML = '';
+
         result.data.forEach(clinic => {
-            clinicList.innerHTML += `
+            const revenueFormatted = Number(clinic.revenue).toLocaleString('vi-VN');
+            const statusBadge = clinic.status == 1
+                ? `<span class="badge bg-success">Hoạt động</span>`
+                : `<span class="badge bg-secondary">Ngừng hoạt động</span>`;
+
+            tableBody.innerHTML += `
                 <tr>
                     <td>${clinic.name}</td>
                     <td>${clinic.address}</td>
                     <td>${clinic.phone}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editClinic('${clinic.id}')">Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteClinic('${clinic.id}')">Xóa</button>
+                    <td>${revenueFormatted}</td>
+                    <td>${statusBadge}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-warning" onclick="editClinic('${clinic.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteClinic('${clinic.id}')"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 </tr>
             `;
@@ -21,28 +31,54 @@ async function loadClinics() {
     }
 }
 
-document.getElementById('addClinicForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('clinicName').value;
-    const address = document.getElementById('clinicAddress').value;
-    const phone = document.getElementById('clinicPhone').value;
-
-    const result = await apiRequest('/clinics', 'POST', { name, address, phone });
+window.editClinic = async function(id) {
+    const result = await apiRequest(`/clinics/${id}`);
     if (result.success) {
-        loadClinics();
-        bootstrap.Modal.getInstance(document.getElementById('addClinicModal')).hide();
-    }
-});
+        const c = result.data;
+        document.getElementById('Id_CoSo').value = c.id;
+        document.getElementById('TenCoSo').value = c.name;
+        document.getElementById('DiaChi').value = c.address;
+        document.getElementById('DienThoai').value = c.phone;
+        document.getElementById('DoanhThu').value = c.revenue;
+        document.getElementById('TrangThai').value = c.status;
+        editingId = c.id;
 
-async function editClinic(id) {
-    alert(`Chỉnh sửa cơ sở thú y ID: ${id}`);
+        window.scrollTo({ top: document.getElementById('clinicForm').offsetTop, behavior: 'smooth' });
+    }
 }
 
-async function deleteClinic(id) {
+window.deleteClinic = async function(id) {
     if (confirm('Bạn có chắc muốn xóa cơ sở này?')) {
         const result = await apiRequest(`/clinics/${id}`, 'DELETE');
         if (result.success) loadClinics();
     }
 }
+
+document.getElementById('clinicForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const clinic = {
+        name: document.getElementById('TenCoSo').value,
+        address: document.getElementById('DiaChi').value,
+        phone: document.getElementById('DienThoai').value,
+        revenue: parseInt(document.getElementById('DoanhThu').value),
+        status: parseInt(document.getElementById('TrangThai').value)
+    };
+
+    const id = document.getElementById('Id_CoSo').value;
+    let result;
+
+    if (id) {
+        result = await apiRequest(`/clinics/${id}`, 'PUT', clinic);
+    } else {
+        result = await apiRequest('/clinics', 'POST', clinic);
+    }
+
+    if (result.success) {
+        document.getElementById('clinicForm').reset();
+        editingId = null;
+        loadClinics();
+    }
+});
 
 loadClinics();

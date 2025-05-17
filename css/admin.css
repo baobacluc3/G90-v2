@@ -1,4 +1,4 @@
-/* === Kiểu dáng cho Project (Admin Dashboard) === */
+/* === cho Project (Admin Dashboard) === */
 .project-section {
     background-color: #f4f7fa;
     border-radius: 15px;
@@ -52,7 +52,7 @@
 }
 
 
-/* === Kiểu dáng cho Users === */
+/* === Users === */
 .users-section {
     background-color: #f4f7fa;
     border-radius: 15px;
@@ -73,17 +73,7 @@
     font-size: 0.9rem;
 }
 
-/* Responsive cho users */
-@media (max-width: 768px) {
-    .users-section h1 {
-        font-size: 2rem;
-    }
-
-    .users-table {
-        font-size: 0.9rem;
-    }
-}
-/* === Kiểu dáng cho Reports === */
+/* ===  cho Reports === */
 .reports-section {
     background-color: #f4f7fa;
     border-radius: 15px;
@@ -106,18 +96,7 @@
     vertical-align: middle;
 }
 
-/* Responsive cho reports */
-@media (max-width: 768px) {
-    .reports-section h1 {
-        font-size: 2rem;
-    }
-
-    .report-table {
-        font-size: 0.9rem;
-    }
-}
-
-/* === Kiểu dáng cho Invoices === */
+/* === cho Invoices === */
 .invoices-section {
     background-color: #f4f7fa;
     border-radius: 15px;
@@ -138,7 +117,7 @@
     font-size: 0.9rem;
 }
 
-/* Responsive cho invoices */
+/*  cho invoices */
 @media (max-width: 768px) {
     .invoices-section h1 {
         font-size: 2rem;
@@ -169,6 +148,23 @@
 .appointment-table .badge {
     font-size: 0.9rem;
 }
+/* payment*/
+.toast-alert {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 9999;
+}
+.toast-alert.show {
+    opacity: 1;
+}
+
 /*  footer */
 .footer-section {
     background: linear-gradient(90deg, #1a3c34, #2d4a5e); /* Gradient xanh đậm */
